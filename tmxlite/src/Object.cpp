@@ -108,9 +108,16 @@ void Object::parse(const pugi::xml_node& node, Map* map)
     //parse templates last so we know which properties
     //ought to be overridden
     std::string templateStr = node.attribute("template").as_string();
-    if (!templateStr.empty() && map)
+    if (!templateStr.empty())
     {
-        parseTemplate(templateStr, map);
+        if (map)
+        {
+            parseTemplate(templateStr, map);
+        }
+        else
+        {
+            Logger::log("Template requested, but no tilemap is available", Logger::Type::Error);
+        }
     }
 }
 

@@ -52,6 +52,7 @@ namespace tmx
     class TMXLITE_EXPORT_API Tileset final
     {
     public:
+        Tileset();
         explicit Tileset(const std::string& workingDir);
         ~Tileset() = default;
 
@@ -115,11 +116,27 @@ namespace tmx
         };
 
         /*!
+        \brief Attempts to parse the tileset at the given location.
+        \param std::string Path to *.tsx tileset file to try to parse
+        \returns true if tileset was parsed successfully else returns false.
+        In debug mode this will attempt to log any errors to the console.
+        */
+        bool load(const std::string&, int first_GID = 0);
+
+        /*!
+        \brief Loads a tileset from a document stored in a string
+        \param data A std::string containing the tileset data to load
+        \param workingDir A std::string containing the working directory
+        in which to find assets such as images
+        \returns true if successful, else false
+        */
+        bool loadFromString(const std::string& data, const std::string& workingDir, int first_GID = 0);
+        /*!
         \brief Attempts to parse the given xml node.
         If node parsing fails an error is printed in the console
         and the Tileset remains in an uninitialised state.
         */
-        void parse(pugi::xml_node, Map*);
+        bool parse(pugi::xml_node, Map*);
         /*!
         \brief Returns the first GID of this tile set.
         This the ID of the first tile in the tile set, so that
@@ -236,8 +253,10 @@ namespace tmx
         std::vector<Terrain> m_terrainTypes;
         std::vector<Tile> m_tiles;
 
-        void reset();
+        bool reset();
 
+        // This function is called on either an embedded tileset (in a file), or the root node in a .tsx file
+        bool parseFullNode(pugi::xml_node, Map*);
         void parseOffsetNode(const pugi::xml_node&);
         void parsePropertyNode(const pugi::xml_node&);
         void parseTerrainNode(const pugi::xml_node&);

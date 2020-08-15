@@ -35,38 +35,11 @@ source distribution.
 #include <tmxlite/LayerGroup.hpp>
 #include <tmxlite/detail/Log.hpp>
 #include <tmxlite/detail/Android.hpp>
+#include <tmxlite/detail/Paths.hpp>
 
 #include <queue>
 
 using namespace tmx;
-
-namespace
-{
-    std::string getFilePath(const std::string& path)
-    {
-        //TODO this doesn't actually check that there is a file at the
-        //end of the path, or that it's even a valid path...
-
-        static auto searchFunc = [](const char separator, const std::string& path)->std::string
-        {
-            std::size_t i = path.rfind(separator, path.length());
-            if (i != std::string::npos)
-            {
-                return(path.substr(0, i + 1));
-            }
-
-            return "";
-        };
-
-
-#ifdef _WIN32 //try windows formatted paths first
-        std::string retVal = searchFunc('\\', path);
-        if (!retVal.empty()) return retVal;
-#endif
-
-        return searchFunc('/', path);
-    }
-}
 
 Map::Map()
     : m_orientation (Orientation::None),
